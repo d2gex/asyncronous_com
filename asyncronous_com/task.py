@@ -8,7 +8,6 @@ class Task:
 
     def __call__(self, instructions):
         result = 0
-        print(instructions)
         for instruction in instructions:
             response, wait = instruction
             time.sleep(float(wait))
