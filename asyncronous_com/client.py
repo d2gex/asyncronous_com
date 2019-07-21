@@ -1,14 +1,16 @@
 import zmq
 import uuid
 
+from asyncronous_com.iprocess import IProcess
 from asyncronous_com import protocol
 from asyncronous_com.com.sink import Sink
 from asyncronous_com.com.producer import Producer
 
 
-class Client:
+class Client(IProcess):
 
     def __init__(self, tasks):
+        super().__init__()
         self.tasks = tasks
         self.results = []
         self.producer = None

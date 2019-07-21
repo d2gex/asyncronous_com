@@ -1,12 +1,14 @@
 import multiprocessing
-from pymulproc import mpq_protocol
 
+from asyncronous_com.iprocess import IProcess
+from pymulproc import mpq_protocol
 from asyncronous_com.com.producer import Producer
 
 
-class Worker:
+class Worker(IProcess):
 
     def __init__(self, identity, url, conn, parent_id, app, linger=0):
+        super().__init__()
         self.pid = multiprocessing.current_process().pid
         self.parent_id = parent_id
         self.conn = conn
@@ -33,3 +35,7 @@ class Worker:
             # (2) Do we have a finite mandate?
             if not stop and not isinstance(loops, bool):
                 loops -= 1
+
+    def clean(self):
+        if self.producer:
+            self.producer.clean()
