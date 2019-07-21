@@ -1,17 +1,15 @@
 import multiprocessing
 from pymulproc import mpq_protocol
 
-from asyncronous_com.com.producer import Producer
-
 
 class Worker:
 
-    def __init__(self, identity, url, conn, parent_id, app, linger=0):
+    def __init__(self, conn, parent_id, app, producer):
         self.pid = multiprocessing.current_process().pid
         self.parent_id = parent_id
         self.conn = conn
         self.app = app
-        self.producer = Producer(identity=identity, url=url, linger=linger)
+        self.producer = producer
 
     def run(self, loops=True):
 
