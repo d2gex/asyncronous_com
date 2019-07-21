@@ -5,6 +5,15 @@ from asyncronous_com.worker import Worker
 from unittest.mock import patch, Mock, MagicMock
 from pymulproc import factory, queuepi, mpq_protocol
 
+
+@pytest.fixture(scope='module', autouse=True)
+def tear_up_mock_producer():
+    '''To avoid having to instantiate the producer socket
+    '''
+    with patch('asyncronous_com.worker.Producer'):
+        yield
+
+
 PARENT_ID = 1
 WORKER_PID = 2
 OTHER_WORKER_ID = 3
@@ -22,7 +31,7 @@ def app():
 
 @pytest.fixture(autouse=True)
 def worker(queue_factory, app):
-    worker = Worker(queue_factory.child(), PARENT_ID, app, MagicMock())
+    worker = Worker('identity', 'url', queue_factory.child(), PARENT_ID, app)
     worker.parent_id = PARENT_ID
     worker.pid = WORKER_PID
     return worker
