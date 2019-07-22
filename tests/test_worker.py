@@ -111,9 +111,6 @@ def test_perform_task(queue_factory, worker, app):
             worker.run(loops=1)
     time.sleep(0.1)
 
-    assert not parent_comm.conn.empty()  # Now the queue should contain the message of the worker
     mock_app.assert_called_once_with(task_data)  # The app that performs the task should have been called
-    mock_producer_run.assert_called_once_with([protocol.TASK_DONE, task_result])  # The result of the task is sent to the other end
-    sms = empty_queue(parent_comm)  # Worker informs the parent that the task is finished
-    assert sms[mpq_protocol.S_PID_OFFSET - 1] == mpq_protocol.REQ_FINISHED
-    assert sms[mpq_protocol.R_PID_OFFSET] == PARENT_ID
+    # The result of the task is sent to the other end
+    mock_producer_run.assert_called_once_with([protocol.TASK_DONE, task_result])
