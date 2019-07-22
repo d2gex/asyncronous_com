@@ -34,7 +34,6 @@ class Worker(IProcess):
                     else:
                         result = self.app(task[-1])
                         self.producer.run([protocol.TASK_DONE, result])
-                        self.conn.send(mpq_protocol.REQ_FINISHED, recipient_pid=self.parent_id)
 
                 # (2) Do we have a finite mandate?
                 if not stop and not isinstance(loops, bool):
