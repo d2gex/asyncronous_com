@@ -143,6 +143,13 @@ An diagram of the implemented solution can be found below:
     :target: #
 
 
+A final note on this section is that the provided solution gravitates around the idea of having processes and
+sockets as persistent as possible within reason, rather than starting processes that open and close sockets frequently.
+Also not enforced for testing purposes, a top limit of how many workers with its corresponding sockets can be created
+it would be desirable - see that you can set the limit whenever you run the server. After such limit has been hit, the
+server will continue to put tasks in the shared queue however no more processes will be created. Only existing ones when
+idle will pick it up.
+
 Alternatives
 ============
 Obviously there are a lot of alternative to this drawing, just within the same COM pattern like getting rid of the
@@ -199,6 +206,8 @@ Then you can open two terminals so that you run the client side as:
     2.  *num_tasks_per_batch*: Number of commands that can be sent at once per request to the server for maximum
         performance
 
+An example of the client started on my local work station:
+
 .. code-block:: bash
 
     python -m asyncronous_com.run_client tests/data/client_data.txt 16 tcp://127.0.0.1:5556 tcp://127.0.0.1:555
@@ -215,14 +224,19 @@ Then the server can be run as follows:
         'tests/data/server_data.txt' that meets the requirements of the document
     2.  *max_workers*: maximum number of workers that the server will create to serve all incoming requests.
 
-Then the server can be run as follows:
+An example of the client started on my remote work station:
 
 .. code-block:: bash
 
     python -m asyncronous_com.run_server tests/data/server_data.txt tcp://127.0.0.1:5557 tcp://127.0.0.1:5556 32
 
 **Note 1**: Lastly the client and server can be run in any orders due to the natural asynchronous nature of ZeroMQ and its queues
+
 **Note 2**: While the client will terminate automatically after receiving the results, the server need to be stopped by
 using CTRL + C. The client can be restarted as many times a possible.
+
 **Note 3**: I have run 32 workers on a Intel i5 dual core with a client batch configuration of 16 tasks per request
-for 512 commands lasting 1 second each and took about ~ 17 seconds
+for 512 commands lasting 1 second each and took about ~ 17 seconds to produce the final result.
+
+**Note 4**: The idea is that the number of workers can be configured for optimal settings after various trials and some
+stats gathered but not putting a limit on the amount of workers is a bad idea.

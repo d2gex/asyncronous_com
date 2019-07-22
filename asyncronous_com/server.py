@@ -18,7 +18,7 @@ class Server(IProcess):
 
         super().__init__()
         self.remote_url = remote_url
-        self.max_processes = max(MIN_PROCESSES, MAX_PROCESSES, max_processes)
+        self.max_processes = max(MIN_PROCESSES, max_processes)
         self.ip_map = ip_map  # this should be a hash table for O(1) lookups
 
         self.child_processes = []
