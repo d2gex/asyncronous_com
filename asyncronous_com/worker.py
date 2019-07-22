@@ -1,5 +1,6 @@
 import multiprocessing
 
+from asyncronous_com import protocol
 from asyncronous_com.iprocess import IProcess
 from pymulproc import mpq_protocol
 from asyncronous_com.com.producer import Producer
@@ -32,7 +33,7 @@ class Worker(IProcess):
                     # (1.2) Send the information via my producer and tell my parent that I am done with it
                     else:
                         result = self.app(task[-1])
-                        self.producer.run(result)
+                        self.producer.run([protocol.TASK_DONE, result])
                         self.conn.send(mpq_protocol.REQ_FINISHED, recipient_pid=self.parent_id)
 
                 # (2) Do we have a finite mandate?
