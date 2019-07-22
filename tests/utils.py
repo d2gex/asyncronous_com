@@ -28,7 +28,21 @@ def generate_server_data(ip_address, max_num, response=(1, 3), wait=(1, 3)):
                 'foo',
                 random.randint(*response) if isinstance(response, tuple) else response,
                 random.randint(*wait) if isinstance(wait, tuple) else wait]
-        data.append('{}_{}:{}:{}:{}'.format(*args))
+        data.append('{}.{}:{}:{}:{}'.format(*args))
         args[2] = 'bar'
-        data.append('{}_{}:{}:{}:{}'.format(*args))
+        data.append('{}.{}:{}:{}:{}'.format(*args))
+    return data
+
+
+def generate_client_data(ip_address, max_num):
+    '''Generate a list of commands associated to ip_addresses
+    '''
+    data = []
+    for item in range(max_num + 1):
+        args = [ip_address,
+                str(item),
+                'foo']
+        data.append('{}.{}:{}'.format(*args))
+        args[2] = 'bar'
+        data.append('{}.{}:{}'.format(*args))
     return data
