@@ -22,17 +22,18 @@ class Client(IProcess):
     def init_sink(self, identity, url, linger=0):
         self.sink = Sink(identity=identity, url=url, linger=linger, s_type=zmq.PULL)
 
-    def run(self, loops=True, tasks_once=1, peer_end=False):
-        '''Send a list of tasks to the other end via a producer socket and poll via sink socket to get the result. Both
-        sending and receiving are asynchronous and independent from each other. This method will end when either
-        a JOB_COMPLETE response has been received or when the maximum amount of loops have been exhausted.
+    def run(self, loops=True):
+        '''Send a list of tasks to the other end via a producer socket and poll via sink socket to get the results. Both
+        sending and receiving are asynchronous and independent from each other. This method will end when
+        the expected num results have been achieved, a JOB_COMPLETE response has been received or when the
+        maximum amount of loops have been exhausted.
 
         :param loops: Maximum number of loops this method should run for
-        :param tasks_once: Number of tasks that should be pushed to the other end at once - Not implemented
-        :param peer_end: Whether this peer should tell the other end to die - Not implemented
         '''
 
         stop = False
+        num_tasks = len(self.tasks)
+        num_results = 0
         while not stop and loops:
             # (1) any task to send?
             if self.tasks:
@@ -47,7 +48,10 @@ class Client(IProcess):
                 if response[0] == protocol.JOB_COMPLETE:  # Job completed? => DIE
                     stop = True
                 elif response[0] == protocol.TASK_DONE:
+                    num_results += 1
                     self.results.append(response[-1])
+                    if not self.tasks and num_results == num_tasks:  # Achieved what we came for? => DIE
+                        stop = True
 
             # (3) Do we have a finite mandate?
             if not stop and not isinstance(loops, bool):
