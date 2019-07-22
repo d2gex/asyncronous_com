@@ -35,11 +35,12 @@ def client_group_tasks(filename, block_size):
     commands = []
     with open(filename) as fh:
         for line in fh:
-            if parse_line(line, server=False):
+            clean_line = line.strip('\n\r')
+            if parse_line(clean_line, server=False):
                 if count % block_size == 1 or block_size == 1:
-                    commands.append([line])
+                    commands.append([clean_line])
                 else:
-                    commands[-1].append(line)
+                    commands[-1].append(clean_line)
                 count += 1
     return commands
 
@@ -49,7 +50,8 @@ def server_data_to_hash_table(filename):
     with open(filename, 'r') as fh:
         for line in fh:
             if parse_line(line):
-                address, command, response, wait = line.split(':')
+                clean_line = line.strip('\n\r')
+                address, command, response, wait = clean_line.split(':')
                 try:
                     data = tasks[address]
                 except KeyError:

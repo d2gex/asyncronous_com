@@ -9,7 +9,7 @@ from asyncronous_com.com.sink import Sink
 from pymulproc import factory, mpq_protocol
 
 MIN_PROCESSES = 2
-MAX_PROCESSES = multiprocessing.cpu_count() * 2
+MAX_PROCESSES = 32
 
 
 class Server(IProcess):
@@ -70,7 +70,6 @@ class Server(IProcess):
             if task:
                 if task[0] == protocol.TASK:
                     instructions = self.to_instructions(task[-1])
-                    # print(task[-1], instructions)
                     if instructions:
                         self.conn.send(mpq_protocol.REQ_DO, data=instructions)
                         if len(self.child_processes) < self.max_processes:
