@@ -1,4 +1,5 @@
 import sys
+import timeit
 
 from asyncronous_com import utils
 from asyncronous_com.client import Client
@@ -18,7 +19,9 @@ if __name__ == "__main__":
         client.init_sink(identity='client_sink', url=bind_url)
         client.init_producer(identity='client_producer', url=remote_url)
         try:
+            start = timeit.default_timer()
             client.run()
+            print(f"Time taken for the task processing: {timeit.default_timer() - start}")
         except KeyboardInterrupt:
             pass
         finally:

@@ -4,12 +4,11 @@ import zmq
 from asyncronous_com import protocol
 from asyncronous_com.iprocess import IProcess
 from asyncronous_com.worker import Worker
-from asyncronous_com.task import Task
+from asyncronous_com.task import ThreadIOTask, ThreadCPUTask, SingleProcessIOTask, SingleProcessCPUTask
 from asyncronous_com.com.sink import Sink
 from pymulproc import factory, mpq_protocol
 
-MIN_PROCESSES = 2
-MAX_PROCESSES = 32
+MIN_PROCESSES = 1
 
 
 class Server(IProcess):
@@ -50,7 +49,7 @@ class Server(IProcess):
                         url=self.remote_url,
                         conn=self.queue_factory.child(),
                         parent_id=self.pid,
-                        app=Task())
+                        app=ThreadIOTask())
         worker.run()
 
     def kill_all(self):

@@ -1,12 +1,12 @@
 import pytest
 
-from asyncronous_com.task import Task
+from asyncronous_com.task import SingleProcessIOTask
 from unittest.mock import patch, call
 
 
-def test_run():
+def test_single_process():
 
-    app = Task()
+    app = SingleProcessIOTask()
     with patch('time.sleep') as mock_sleep:
         result = app([(2, 0.5), (3, 1), (4, 0)])
     assert result == 9
